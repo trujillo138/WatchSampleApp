@@ -12,11 +12,30 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
   var window: UIWindow?
+  private lazy var stateController: StateController = {
+    return StateController()
+  }()
+  
+  private lazy var appWatchConnectivityHandler: AppWatchConnectivityHandler = {
+    return AppWatchConnectivityHandler()
+  }()
 
 
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-    // Override point for customization after application launch.
+    configureRootViewController()
+    configureAppWatchConnectivityHandler()
     return true
+  }
+  
+  private func configureRootViewController() {
+    guard let rootVC = window?.rootViewController as? UINavigationController,
+            let expensesVC = rootVC.viewControllers.first as? ExpensesViewController else { return }
+    expensesVC.stateController = stateController
+  }
+  
+  private func configureAppWatchConnectivityHandler() {
+    appWatchConnectivityHandler.stateController = stateController
+    appWatchConnectivityHandler.startWatchSession()
   }
 
   func applicationWillResignActive(_ application: UIApplication) {
